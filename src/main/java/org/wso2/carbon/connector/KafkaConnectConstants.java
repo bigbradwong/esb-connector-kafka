@@ -44,6 +44,7 @@ public class KafkaConnectConstants {
     public static final String REQUEST_TIMEOUT_MS = "request.timeout.ms";
     public static final String SASL_KERBEROS_SERVICE_NAME = "sasl.kerberos.service.name";
     public static final String SECURITY_PROTOCOL = "security.protocol";
+    public static final String SASL_MECHANISM = "sasl.mechanism";
     public static final String SEND_BUFFER_BYTES = "send.buffer.bytes";
     public static final String SSL_ENABLED_PROTOCOLS = "ssl.enabled.protocols";
     public static final String SSL_KEYSTORE_TYPE = "ssl.keystore.type";
@@ -103,6 +104,7 @@ public class KafkaConnectConstants {
     public static final String KAFKA_SASL_JAAS_CONFIG = "kafka.saslJaasConfig";
     public static final String KAFKA_SASL_KERBEROS_SERVICE_NAME = "kafka.saslKerberosServiceName";
     public static final String KAFKA_SECURITY_PROTOCOL = "kafka.securityProtocol";
+    public static final String KAFKA_SASL_MECHANISM = "kafka.saslMechanism";
     public static final String KAFKA_SEND_BUFFER_BYTES = "kafka.sendBufferBytes";
     public static final String KAFKA_SSL_ENABLED_PROTOCOLS = "kafka.sslEnabledProtocols";
     public static final String KAFKA_SSL_KEYSTORE_TYPE = "kafka.sslKeystoreType";

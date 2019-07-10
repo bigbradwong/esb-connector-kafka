@@ -67,6 +67,7 @@
                files"/>
     <parameter name="saslKerberosServiceName" description="The Kerberos principal name that Kafka runs as."/>
     <parameter name="securityProtocol" description="Protocol used to communicate with brokers."/>
+    <parameter name="saslMechanism" description="Mechanism used to communicate with brokers."/>
     <parameter name="sendBufferBytes"
                description="The size of the TCP send buffer (SO_SNDBUF) to use when sending data."/>
     <parameter name="sslEnabledProtocols" description="The list of protocols enabled for SSL connections."/>
@@ -148,6 +149,7 @@
         <property expression="$func:saslJaasConfig" name="kafka.saslJaasConfig"/>
         <property expression="$func:saslKerberosServiceName" name="kafka.saslKerberosServiceName"/>
         <property expression="$func:securityProtocol" name="kafka.securityProtocol"/>
+        <property expression="$func:saslMechanism" name="kafka.saslMechanism"/>
         <property expression="$func:sendBufferBytes" name="kafka.sendBufferBytes"/>
         <property expression="$func:sslEnabledProtocols" name="kafka.sslEnabledProtocols"/>
         <property expression="$func:sslKeystoreType" name="kafka.sslKeystoreType"/>

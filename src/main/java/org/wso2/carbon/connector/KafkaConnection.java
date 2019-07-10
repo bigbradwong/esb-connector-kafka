@@ -19,6 +19,7 @@
 package org.wso2.carbon.connector;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.synapse.MessageContext;
 import org.apache.synapse.SynapseException;
@@ -31,6 +32,7 @@ import java.util.Properties;
  * The kafka producer connection.
  */
 public class KafkaConnection {
+
     /**
      * Create new connection with kafka broker.
      *
@@ -38,7 +40,10 @@ public class KafkaConnection {
      * @return the producer
      */
     public KafkaProducer<String, String> createNewConnection(MessageContext messageContext) {
+        Log log = messageContext.getServiceLog();
+        try{
         Axis2MessageContext axis2mc = (Axis2MessageContext) messageContext;
+
         String brokers = (String) axis2mc.getAxis2MessageContext()
                 .getProperty(KafkaConnectConstants.KAFKA_BROKER_LIST);
         String keySerializationClass = (String) messageContext
@@ -80,6 +85,8 @@ public class KafkaConnection {
                 .getProperty(KafkaConnectConstants.KAFKA_SASL_KERBEROS_SERVICE_NAME);
         String securityProtocol = (String) messageContext
                 .getProperty(KafkaConnectConstants.KAFKA_SECURITY_PROTOCOL);
+        String saslMechanism = (String) messageContext
+                .getProperty(KafkaConnectConstants.KAFKA_SASL_MECHANISM);
         String sendBufferBytes = (String) messageContext
                 .getProperty(KafkaConnectConstants.KAFKA_SEND_BUFFER_BYTES);
         String sslEnabledProtocols = (String) messageContext
@@ -180,6 +187,10 @@ public class KafkaConnection {
             producerConfigProperties.put(KafkaConnectConstants.SECURITY_PROTOCOL, securityProtocol);
         }
 
+        if (StringUtils.isNotEmpty(saslMechanism)) {
+            producerConfigProperties.put(KafkaConnectConstants.SASL_MECHANISM, saslMechanism);
+        }
+
         producerConfigProperties.put(KafkaConnectConstants.SEND_BUFFER_BYTES, sendBufferBytes);
 
         if (StringUtils.isNotEmpty(sslEnabledProtocols)) {
@@ -260,11 +271,18 @@ public class KafkaConnection {
             producerConfigProperties.put(KafkaConnectConstants
                     .SSL_TRUSTMANAGER_ALGORITHM, sslTrustmanagerAlgorithm);
         }
+        log.info("SEND : Kafka provider connection properties.");
+        for(Object t:producerConfigProperties.keySet()){
+            log.info(t+"="+ producerConfigProperties.getProperty(t.toString()));
+        }
 
-        try {
+
             return new KafkaProducer<>(producerConfigProperties);
         } catch (Exception e) {
+            log.error(e.getMessage());
+            System.out.println(e);
             throw new SynapseException("The Variable properties or values are not valid", e);
+
         }
     }
 }

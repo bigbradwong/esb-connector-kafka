@@ -69,9 +69,11 @@ public class KafkaProduceConnector extends AbstractConnector {
             if (StringUtils.isEmpty(maxPoolSize) || KafkaConnectConstants.DEFAULT_CONNECTION_POOL_MAX_SIZE
                     .equals(maxPoolSize)) {
                 //Make the producer connection without connection pool
+                log.auditLog("SEND : send message to  Broker lists. sendWithoutPool");
                 sendWithoutPool(messageContext, topic, partitionNo, key, message, headers);
             } else {
                 //Make the producer connection with connection pool
+                log.auditLog("SEND : send message to  Broker lists. sendWithPool");
                 sendWithPool(messageContext, topic, partitionNo, key, message, headers);
             }
         } catch (AxisFault axisFault) {
@@ -159,6 +161,11 @@ public class KafkaProduceConnector extends AbstractConnector {
 
         Future<RecordMetadata> metaData;
         metaData = producer.send(new ProducerRecord<>(topic, partitionNumber, key, message, headers));
+
+        SynapseLog log = getLog(messageContext);
+        log.auditLog("SEND : metaData topic: "+ metaData.get().topic());
+        log.auditLog("SEND : metaData offset: "+ metaData.get().offset());
+        log.auditLog("SEND : metaData partition: "+ metaData.get().partition());
         messageContext.setProperty("topic", metaData.get().topic());
         messageContext.setProperty("offset", metaData.get().offset());
         messageContext.setProperty("partition", metaData.get().partition());
@@ -180,7 +187,8 @@ public class KafkaProduceConnector extends AbstractConnector {
     private void sendWithPool(MessageContext messageContext, String topic, String partitionNo, String key,
                               String message, org.apache.kafka.common.header.Headers headers)
             throws ConnectException {
-
+        SynapseLog log = getLog(messageContext);
+        log.auditLog("SEND : sendWithPool begin.");
         KafkaProducer<String, String> producer = KafkaConnectionPool.getConnectionFromPool();
         if (producer == null) {
             KafkaConnectionPool.initialize(messageContext);
@@ -219,8 +227,14 @@ public class KafkaProduceConnector extends AbstractConnector {
     private void sendWithoutPool(MessageContext messageContext, String topic, String partitionNo, String key,
                                  String message, org.apache.kafka.common.header.Headers headers)
             throws ConnectException {
+
+        SynapseLog log = getLog(messageContext);
+        log.auditLog("SEND : producer is: begin.");
         KafkaConnection kafkaConnection = new KafkaConnection();
+        log.auditLog("SEND : producer is: begin2.");
         KafkaProducer<String, String> producer = kafkaConnection.createNewConnection(messageContext);
+
+        log.auditLog("SEND : producer is: "+producer.toString());
         try {
             send(producer, topic, partitionNo, key, message, headers, messageContext);
         } catch (Exception e) {
